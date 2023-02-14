@@ -1,152 +1,138 @@
-package tictactaegame;
-import java.io.PrintStream;
+package org.example;
+
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
-import java.util.*;
-class Tictactae
-{
-	static PrintStream l=new PrintStream((new FileOutputStream(FileDescriptor.out)));
-	static char[][]board=new char[3][3];
-	Tictactae(){
-		initBoard();
-	}
-	static void initBoard()
-	{
-		for(int i=0;i<board.length;i++)
-		{
-			for(int j=0;j<board.length;j++)
-			{
-				board[i][j]=' ';
-			}
-		}
-	}
-	void printboard()
-	{
-		l.println("-------");
-		for(int i=0;i<board.length;i++)
-		{
-			l.print("|");
-			for(int j=0;j<board.length;j++)
-			{
-				l.print(board[i][j]+ "|");
-			}
-			l.println();
-			l.println("-------");
-		}
-	}
-	static void placeMark(int row,int col,char mark) {
-		board[row][col]=mark;
-	}
-	static boolean checkRow()       
-	{
-		for(int i=0;i<3;i++) {
-		if(board[i][0]!=' ' && board[i][0] == board[i][1] && board[i][1]== board[i][2]) {
-			return true;
-		}
-		}
-		return false;
-	}
-	static boolean checkcol()
-	{
-		for(int j=0;j<3;j++) 
-		{
-			if(board[0][j]!=' ' && board[0][j] == board[1][j] && board[1][j] == board[2][j])
-			{
-				return true;
-		        }
-		}
-		return false;
-	}
-	static boolean checkDiag() {
-		return board [0][0]!=' ' && board[0][0] ==  board[1][1] && board[1][1] ==  board[2][2] && board[0][0] == board[2][2] || board[0][2]!=' ' && board[0][2] == board[1][1] && board[1][1]==board[2][0];
-		
-	}
+import java.io.PrintStream;
+import java.util.Scanner;
+
+class Tictactoe{
+    static char[][] symbol;
+    static PrintStream li=new PrintStream((new FileOutputStream(FileDescriptor.out)));
+    public Tictactoe(){
+        symbol=new char[3][3];
+        gothrough();
+    }
+     static void gothrough(){
+        for(int i=0;i<symbol.length;i++){
+            for(int j=0;j<symbol[i].length;j++)
+            {
+                symbol[i][j]=' ';
+            }
+        }
+    }
+    static void displaytictactoe(){
+        li.println("--------------");
+        for(int i=0;i<symbol.length;i++){
+            li.print("| ");
+            for(int j=0;j<symbol.length;j++)
+            {
+
+                li.print(symbol[i][j]+" | ");
+            }
+            li.println();
+            li.println("--------------");
+        }
+    }
+    static void placesymbol(int row,int column,char mark){
+        if(row>=0 && row<=2 && column>=0 && column<=2){
+            symbol[row][column]=mark;
+        }
+        else {
+            li.println("Invalid input");
+        }
+    }
+    static boolean columnwin(){
+        for(int j=0;j<=2;j++){
+            if(symbol[0][j]!=' ' && symbol[0][j]==symbol[1][j] && symbol[1][j]==symbol[2][j]){
+                return true;
+            }
+        }
+        return  false;
+    }
+    static boolean rowwin(){
+        for(int i=0;i<=2;i++){
+            if(symbol[i][0]!=' ' && symbol[i][0]==symbol[i][1] && symbol[i][1]==symbol[i][2]){
+                return true;
+            }
+        }
+        return  false;
+    }
+    static boolean diagonalwin(){
+        return(symbol[0][0]!=' ' && symbol[0][0]==symbol[1][1] && symbol[1][1]==symbol[2][2] || symbol[0][2]!=' ' && symbol[0][2]==symbol[1][1] && symbol[1][1]==symbol[2][0]);
+           
+    }
 }
-class HumanPlayer 
-{
-	String name;
-	char mark;
-	HumanPlayer(String name,char mark){
-		this.name=name;
-		this.mark=mark;
-	}
-	 
-	void makeMove()
-	{
-	Scanner scan=new Scanner(System.in);
-	int row;
-	int col;
-	do
-	{
-		Tictactae.l.println("enter row and col:");
-		row=scan.nextInt();
-		col=scan.nextInt();
-	}while(!validMove(row,col));
-	Tictactae.placeMark(row,col,mark);
-	}
-	boolean validMove(int row,int col)
-	{
-		return row>=0 && row<=2 && col>=0 && col<=2 && Tictactae.board[row][col]==' ';
-		
-	}
+class Humanmove extends Tictactoe{
+    String name;
+    char symbol;
+    Humanmove(String name1,char symbol1){
+        this.name=name1;
+        this.symbol=symbol1;
+    }
+    void move(){
+        Scanner sc=new Scanner(System.in);
+        int r;
+        int c;
+        do {
+            li.println("Enter the row number:");
+            r = sc.nextInt();
+            li.println("Enter the column number:");
+            c = sc.nextInt();
+        }while (!validmove(r,c));
+        Tictactoe.placesymbol(r,c,symbol);
+    }
+    boolean validmove(int row,int column){
+        if(row>=0 && row<=2 && column>=0 && column<=2){
+            if(Tictactoe.symbol[row][column]==' '){
+                return true;
+            }
+        }
+        return false;
+    }
 }
-public class Game 
-{
-    public static void main( String[] args )
-    {
-    Tictactae tic=new Tictactae();
-    Scanner scan=new Scanner(System.in);
-    Scanner scan1=new Scanner(System.in);
-    char mark;
-    char mark1;
-    int t=0;
-    int count=0;
-    tic.printboard();
-    Tictactae.l.println("Enter Player1");
-    String name=scan.nextLine();
-    Tictactae.l.println("Choose X  OR O");
-    mark=scan.next().charAt(0);
-    HumanPlayer player1=new HumanPlayer(name,mark);
-    
-    Tictactae.l.println("Enter Player2");
-    String name1=scan1.nextLine();
-    if(mark=='X') {
-    mark1='O';
-    }else {
-    	mark1='X';
+public class Game {
+    public static void main(String[] args) {
+        int count=0;
+        Tictactoe ti=new Tictactoe();
+        PrintStream li=new PrintStream((new FileOutputStream(FileDescriptor.out)));
+        Scanner sc1=new Scanner(System.in);
+        Scanner sc=new Scanner(System.in);
+        li.println("Enter the two person names");
+        String name1=sc1.nextLine();
+        String name2=sc1.nextLine();
+        li.println("Enter two Symbols to play X or O");
+        char c1=sc.next().charAt(0);
+        char c2=sc.next().charAt(0);
+        Humanmove h1=new Humanmove(name1,c1);
+        Humanmove h2=new Humanmove(name2,c2);
+        Humanmove currentplayer;
+        currentplayer=h1;
+      while(true)
+      {
+          li.println(currentplayer.name + " Starts");
+          currentplayer.move();
+          count++;
+
+          Tictactoe.displaytictactoe();
+          if(Tictactoe.columnwin()||Tictactoe.rowwin()||Tictactoe.diagonalwin()){
+              li.println(currentplayer.name+ " has won");
+              break;
+          }
+
+          else{
+              if(currentplayer==h1){
+                  currentplayer=h2;
+              }
+              else{
+                  currentplayer=h1;
+              }
+          }
+
+        if(count>=9)
+        {
+            li.println("Draw match!!");
+            break;
+        }
+      }
     }
-    HumanPlayer player2=new HumanPlayer(name1,mark1);
-    
-    HumanPlayer cp;
-    cp = player1;
-    
-    while(count<9) {
-    Tictactae.l.println(cp.name + "Turn");
-    cp.makeMove();
-    tic.printboard();
-    if(Tictactae.checkRow() || Tictactae.checkcol() || Tictactae.checkDiag() )
-    {
-    	Tictactae.l.println(cp.name +"Win");
-    	t++;
-    	break;
-    }
-    else
-    {
-	count++;
-    	if(cp==player1)
-    	{
-    		cp=player2;
-    	}
-    	else
-    	{
-    		cp=player1;
-    	}
-    }
-    }
-    if(t==0) {
-    	Tictactae.l.println("Match is Draw");
-    }
-    }
-    
-      
 }
